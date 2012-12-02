@@ -58,6 +58,22 @@ public:
 
 	}
 
+	bool operator==(const Entry &other) const {
+		 return !(&this < other) && !(other < &this);
+	}
+
+	bool equalKey(Key other)
+	{
+		Key a=this->getKey();
+		Key b=other;
+		if(  !(a < b) && !(b < a) )
+			return true;
+		else
+			return false;
+
+	}
+
+
 
 
 };
@@ -187,13 +203,13 @@ public:
 			Entry<Key,Value> * aux = _entries[h];
 
 
-			if(aux->getKey() == key )
+			if(aux->equalKey(key))
 				return true;
 
 			while(aux->getNext() != NULL)
 			{
 				aux = aux->getNext();
-				if(aux->getKey() == key )
+				if(aux->equalKey(key))
 					return true;
 			}
 
@@ -219,7 +235,7 @@ public:
 			if(_espacios[h] != 1 && aux == NULL)
 			   throw NotFoundException<Key> ("No se encuentra ", key);
 
-			if(aux->getKey() == key)
+			if(aux->equalKey(key))
 				return aux->getValue();
 
 			// aun no se encuentra
@@ -227,12 +243,13 @@ public:
 			{
 				aux = aux->getNext();
 				// si la clave es la misma devuelve el VALOR
-				if(aux->getKey() == key)
+				if(aux->equalKey(key))
 					return aux->getValue();
 			}
 
 			//se busco en toda la cadena y no existe
-			return 0;
+			Value v;
+			return v;
 
 	}
 
@@ -246,7 +263,7 @@ public:
 			return;
 
 		//TODO: se puede eliminar la cadena tambien
-		if(_entries[h]->getKey() == key)
+		if(_entries[h]->equalKey(key))
 		{
 			// DELETE AGREGADO AHORA SI CAUSA PROBLEMAS SACALO
 			delete _entries[h];
@@ -263,7 +280,7 @@ public:
 			{
 
 				// si la clave es la misma elimina la entrada
-				if(aux->getNext()->getKey() == key)
+				if(aux->getNext()->equalKey(key))
 				{
 					// DELETE AGREGADO SI CAUSA PROBLEMAS SACALO
 					delete aux->getNext();
@@ -289,8 +306,6 @@ IICMap<Key, Value>* newMapObject(){
 	IICMap<Key,Value>* obj = new HT<Key,Value>();
 	return obj;
 }
-
-
 
 
 

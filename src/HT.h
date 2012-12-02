@@ -88,6 +88,7 @@ private:
 	// espacios[i] sera 1 cuando se encuentre alguna entry en entries[i]
 	int* _espacios;
 	int _length;
+	int _ocupados;
 	int hash(const char* chars, int length)
 	{
 			//polinomial
@@ -108,13 +109,13 @@ private:
 	}
 
 	void growIfNeed(){
-		double n = (double)_size/(double)_length;
+		double n = (double)_ocupados/(double)_length;
 		if(n > 0.75)
 		{
 			//es necesario incrementar el arreglo
 			int l = _length*2;
-			Entry<Key, Value>* aux_table[l];
-			int aux_espacios[l];
+			Entry<Key, Value>** aux_table = new Entry<Key, Value>* [l];
+			int* aux_espacios = new int[l];
 
 			//copiar los valores
 			for(int i=0; i < _length; i++)
@@ -141,6 +142,7 @@ public:
 		_length = 1000;
 		_entries = new Entry<Key, Value>*[1000];
 		_espacios = new int[1000];
+		_ocupados = 0;
 	}
 
 	// ---------------------------		 	METODOS		---------------------------------------
@@ -166,6 +168,7 @@ public:
 				_entries[h] = n;
 				_size ++;
 				_espacios[h] = 1;
+				_ocupados ++;
 				growIfNeed();
 				return n->getValue();
 
@@ -248,8 +251,8 @@ public:
 			}
 
 			//se busco en toda la cadena y no existe
-			Value v;
-			return v;
+
+			return 0;
 
 	}
 
@@ -265,10 +268,21 @@ public:
 		//TODO: se puede eliminar la cadena tambien
 		if(_entries[h]->equalKey(key))
 		{
-			// DELETE AGREGADO AHORA SI CAUSA PROBLEMAS SACALO
-			delete _entries[h];
 
-			_entries[h] = NULL;
+			if(_entries[h]->getNext() == NULL)
+			{
+
+				// DELETE AGREGADO AHORA SI CAUSA PROBLEMAS SACALO
+			    delete _entries[h];
+
+				_entries[h] = NULL;
+				_ocupados--;
+
+			}
+
+			else
+				_entries[h] = _entries[h]->getNext();
+
 			_espacios[h] = 0;
 			_size--;
 		}

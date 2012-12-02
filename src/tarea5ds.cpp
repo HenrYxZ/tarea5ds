@@ -38,6 +38,10 @@ int main() {
 		cout << "false uno" << endl;
 	}
 
+	map->remove("alfa");
+	cout << map->find("alfa") << endl;
+
+
 	/*
 
 	map->put("p","f");

@@ -107,8 +107,8 @@ private:
 				aux_espacios[i] = _espacios[i];
 			}
 
-			//delete [] _entries;
-			//delete[] _espacios;
+			delete [] _entries;
+			delete[] _espacios;
 
 			_entries = aux_table;
 			_espacios = aux_espacios;
@@ -137,20 +137,19 @@ public:
 
 	Value put(Key key, Value value){
 
-		Entry<Key,Value> a(key,value);
-		Entry<Key,Value> * n = &a;
+		Entry<Key,Value>* n = new Entry<Key,Value>(key,value);
+
 
 
 			int h = n->hashCode();
 			h = h % _length;
-			cout << " Luego tiene key h primero" << n->getKey();
+
 			// si la posicion h de la tabla esta vacia de en h
 			if(_espacios[h] != 1)
 			{
 				_entries[h] = n;
 				_size ++;
 				_espacios[h] = 1;
-				cout << " Luego tiene key h primero" << _entries[h]->getKey();
 				growIfNeed();
 				return n->getValue();
 
@@ -166,6 +165,7 @@ public:
 
 				aux->setNext(n);
 				_size++;
+				growIfNeed();
 
 				return aux->getValue();
 
@@ -186,7 +186,7 @@ public:
 
 			Entry<Key,Value> * aux = _entries[h];
 
-			cout << _entries[306]->getKey() << endl;
+
 			if(aux->getKey() == key )
 				return true;
 
@@ -208,15 +208,13 @@ public:
 	// lanza una excepcion si no posee la clave
 	Value find(Key key) throw(NotFoundException<Key>){
 
-		cout << _entries[306]->getKey() << endl;
+
 			int h = hashCode(key);
 			h = h % _length;
-			cout << _entries[306]->getKey() << endl;
-			cout << h << endl;
 			Entry<Key,Value>* aux;
 			aux = _entries[h];
 
-			cout << _entries[306]->getKey() << endl;
+
 			// HAY QUE ARREGLAR LA EXCEPCION
 			if(_espacios[h] != 1 && aux == NULL)
 			   throw NotFoundException<Key> ("No se encuentra ", key);
@@ -250,6 +248,9 @@ public:
 		//TODO: se puede eliminar la cadena tambien
 		if(_entries[h]->getKey() == key)
 		{
+			// DELETE AGREGADO AHORA SI CAUSA PROBLEMAS SACALO
+			delete _entries[h];
+
 			_entries[h] = NULL;
 			_espacios[h] = 0;
 			_size--;
@@ -264,6 +265,9 @@ public:
 				// si la clave es la misma elimina la entrada
 				if(aux->getNext()->getKey() == key)
 				{
+					// DELETE AGREGADO SI CAUSA PROBLEMAS SACALO
+					delete aux->getNext();
+
 					aux->setNext(NULL);
 					_size--;
 					return;

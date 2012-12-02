@@ -9,6 +9,7 @@
 #include <iostream>
 #include "HT.h"
 #include "IICMap.h"
+#include <string>
 
 
 using namespace std;
@@ -16,7 +17,7 @@ using namespace std;
 int main() {
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 
-	IICMap<int,int>* map = newMapObject<int,int>();
+	IICMap<const char*,int>* map = newMapObject<const char*,int>();
 	/*
 	map->put("hola", "mundo");
 	delete map;
@@ -25,12 +26,12 @@ int main() {
 	*/
 
 
-	map->put(2,3);
+	map->put("alfa",3);
 	//cout << map->find(2);
-	if(map->contains(2))
+	if(map->contains("alfa"))
 	{
 		cout << "Encontro la key" << endl;
-		cout << map->find(2) << endl;
+		cout << map->find("alfa") << endl;
 	}
 	else
 	{

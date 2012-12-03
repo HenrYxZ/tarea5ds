@@ -15,6 +15,16 @@
 
 using namespace std;
 
+class Kangaroo : Hashable {
+public:
+	Kangaroo(){
+
+	}
+	int hashCode(){
+		return 31;
+	}
+};
+
 
 int main() {
 
@@ -22,7 +32,18 @@ int main() {
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 
-	IICMap<timeStamp,int>* map = newMapObject<timeStamp,int>();
+	/*
+	Hashable* e = new Entry<int,int>();
+	Hashable* aux = new Entry<string,string>();
+
+	if(typeid( *e ) == typeid( *aux ) )
+		cout << "todo well" << endl;
+	*/
+
+
+
+
+	IICMap<int,int>* map = newMapObject<int,int>();
 	/*
 	map->put("hola", "mundo");
 	delete map;
@@ -31,26 +52,30 @@ int main() {
 	*/
 
 
-	timeStamp st=timeStamp();
+	//timeStamp st=new timeStamp();
+	for(int i=0; i < 2000; i++)
+	{
+		//if(i == 2715)
+			//cout << "lorea\n";
+		map->put(i ,i*2-3);
+	}
 
-	map->put(st,3);
-	//cout << map->find(2);
-	if(map->contains(st))
+	if(map->contains(2))
 	{
 		cout << "Encontro la key" << endl;
-		cout << map->find(st) << endl;
+		cout << map->find(2) << endl;
 	}
 	else
 	{
 		cout << "false uno" << endl;
 	}
 	cout << "Remove Key" << endl;
-	map->remove(st);
+	map->remove(2);
 
-	if(map->contains(st))
+	if(map->contains(2))
 		{
 			cout << "Encontro la key" << endl;
-			cout << map->find(st) << endl;
+			cout << map->find(2) << endl;
 		}
 		else
 		{

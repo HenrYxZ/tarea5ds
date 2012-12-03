@@ -12,16 +12,18 @@
 #include <iostream>
 #include <time.h>
 #include <typeinfo>
+#include <stdlib.h>
 
 using namespace std;
 
 template<typename Key, typename Value>
-class Entry : public Hashable{
+class Entry{
 
 private:
 	Value _v;
 	Key _k;
 	Entry* _next;
+
 
 public:
 
@@ -29,9 +31,10 @@ public:
 		_k = k;
 		_v = v;
 		_next = NULL;
+
 	}
 	Entry(){
-		this = NULL; _next = NULL;
+		this=NULL; _next = NULL;
 	}
 	virtual ~Entry() {};
 	Entry* getNext() { return _next; }
@@ -39,7 +42,9 @@ public:
 	Value getValue(){ return _v; }
 	Key getKey(){ return _k; }
 
+
 	// ESTE ES EL METODO QUE SE DEBE CAMBIAR PARA FUNCION DE HASH
+	/*
 	int hash(const char* chars, int length)
 	{
 		//polinomial
@@ -55,7 +60,9 @@ public:
 
 
 		Key aux = _k;
-		bool isHashable= (typeid(Hashable)==typeid(_k));
+		Hashable* e = new Entry<Key,Value>();
+		bool isHashable= false;
+		isHashable = (typeid(e)==typeid(&_k));
 		int hashC=0;
 		if (isHashable){
 
@@ -65,18 +72,22 @@ public:
 			hashC=obj->hashCode();
 
 
-			int length = sizeof(hashC);
-					const char* p = reinterpret_cast<const char*>(&hashC);
-					return hash(p,length);
+				//int length = sizeof(hashC);
+				//	const char* p = reinterpret_cast<const char*>(&hashC);
+					return hashC;
+
 
 		}
 
+
+		e = NULL;
 
 		int length = sizeof(aux);
 		const char* p = reinterpret_cast<const char*>(&aux);
 		return hash(p,length);
 
 	}
+	*/
 
 	bool operator==(const Entry &other) const {
 		 return !(&this < other) && !(other < &this);
@@ -120,31 +131,129 @@ private:
 				return h;
 	}
 
-	int hashCode(Key k){
+	/*
+	template<typename T> int hashCode(T k){
 
-				Key aux = k;
-				bool isHashable= (typeid(Hashable)==typeid(k));
-				int hashC=0;
-				if (isHashable){
-
-					Hashable* obj;
-
-					obj= dynamic_cast<Hashable*>(&aux);     // ok: derived-to-base
-					hashC=obj->hashCode();
-
-
-					int length = sizeof(hashC);
-							const char* p = reinterpret_cast<const char*>(&hashC);
-							return hash(p,length);
-
-				}
-
-
-				int length = sizeof(aux);
-				const char* p = reinterpret_cast<const char*>(&aux);
+				int length = sizeof(k);
+				const char* p = reinterpret_cast<const char*>(&k);
 				return hash(p,length);
 
 	}
+	*/
+
+
+	int hashCode(bool k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(string k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(char k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(unsigned char k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode( int k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(unsigned int k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(long int k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(short k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(unsigned short k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(float k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+
+	int hashCode(double k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+	int hashCode(long double k){
+
+		int length = sizeof(k);
+		const char* p = reinterpret_cast<const char*>(&k);
+		return hash(p,length);
+
+		}
+
+
+	template<typename T> int hashCode(T* k){
+
+				int length = sizeof(k);
+				const char* p = reinterpret_cast<const char*>(&k);
+				return hash(p,length);
+
+		}
+
+	template<typename T> int hashCode(T k){
+
+			return k.hashCode();
+
+
+			}
 
 	void growIfNeed(){
 		double n = (double)_ocupados/(double)_length;
@@ -163,11 +272,12 @@ private:
 			}
 
 			delete [] _entries;
-			delete[] _espacios;
+
 
 			_entries = aux_table;
 			_espacios = aux_espacios;
 			_length = l;
+
 
 		}
 	}
@@ -197,11 +307,27 @@ public:
 
 
 
-			int h = n->hashCode();
+			int h = hashCode( n->getKey() );
 			h = h % _length;
 
+			//la posicion esta ocupada, avanzar hasta encontrar un espacio
+						if(_espacios[h] == 1)
+						{
+							Entry<Key,Value> * aux = _entries[h];
+							//buscamos el espacio vacio, mientras el siguiente no sea null
+							while(aux->getNext() != NULL)
+								aux = aux->getNext();
+
+							aux->setNext(n);
+							_size++;
+							growIfNeed();
+
+							return aux->getValue();
+
+						}
+
 			// si la posicion h de la tabla esta vacia de en h
-			if(_espacios[h] != 1)
+			else
 			{
 				_entries[h] = n;
 				_size ++;
@@ -212,21 +338,7 @@ public:
 
 			}
 
-			//la posicion esta ocupada, avanzar hasta encontrar un espacio
-			else
-			{
-				Entry<Key,Value> * aux = _entries[h];
-				//buscamos el espacio vacio, mientras el siguiente no sea null
-				while(aux->getNext() != NULL)
-					aux = aux->getNext();
 
-				aux->setNext(n);
-				_size++;
-				growIfNeed();
-
-				return aux->getValue();
-
-			}
 
 
 
@@ -273,7 +385,7 @@ public:
 
 
 			// HAY QUE ARREGLAR LA EXCEPCION
-			if(_espacios[h] != 1 && aux == NULL)
+			if(_espacios[h] != 1)
 			   throw NotFoundException<Key> ("No se encuentra ", key);
 
 			if(aux->equalKey(key))
@@ -290,7 +402,7 @@ public:
 
 			//se busco en toda la cadena y no existe
 			Value v;
-			v=0;
+			//v=0;
 			return v;
 
 	}

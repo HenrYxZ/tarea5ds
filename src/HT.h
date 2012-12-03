@@ -10,6 +10,8 @@
 
 #include "IICMap.h"
 #include <iostream>
+#include <time.h>
+#include <typeinfo>
 
 using namespace std;
 
@@ -51,8 +53,26 @@ public:
 
 	int hashCode(){
 
+
 		Key aux = _k;
-		int length = sizeof(_k);
+		bool isHashable= (typeid(Hashable)==typeid(_k));
+		int hashC=0;
+		if (isHashable){
+
+			Hashable* obj;
+
+			obj= dynamic_cast<Hashable*>(&aux);     // ok: derived-to-base
+			hashC=obj->hashCode();
+
+
+			int length = sizeof(hashC);
+					const char* p = reinterpret_cast<const char*>(&hashC);
+					return hash(p,length);
+
+		}
+
+
+		int length = sizeof(aux);
 		const char* p = reinterpret_cast<const char*>(&aux);
 		return hash(p,length);
 
@@ -102,9 +122,27 @@ private:
 
 	int hashCode(Key k){
 
-			int length = sizeof(k);
-			const char* p = reinterpret_cast<const char*>(&k);
-			return hash(p,length);
+				Key aux = k;
+				bool isHashable= (typeid(Hashable)==typeid(k));
+				int hashC=0;
+				if (isHashable){
+
+					Hashable* obj;
+
+					obj= dynamic_cast<Hashable*>(&aux);     // ok: derived-to-base
+					hashC=obj->hashCode();
+
+
+					int length = sizeof(hashC);
+							const char* p = reinterpret_cast<const char*>(&hashC);
+							return hash(p,length);
+
+				}
+
+
+				int length = sizeof(aux);
+				const char* p = reinterpret_cast<const char*>(&aux);
+				return hash(p,length);
 
 	}
 
@@ -251,8 +289,9 @@ public:
 			}
 
 			//se busco en toda la cadena y no existe
-
-			return 0;
+			Value v;
+			v=0;
+			return v;
 
 	}
 
@@ -323,7 +362,30 @@ IICMap<Key, Value>* newMapObject(){
 
 
 
+class timeStamp :public Hashable {
+		private:
+			int id;
+		public:
+			timeStamp(){
+				this->id=clock();
 
+				}
+				virtual ~timeStamp() {};
+			int hashCode()
+			{
+				return id;
+			}
+			int getID()
+			{
+			return id;
+			}
+			bool operator<(const timeStamp &other){
+				return (id<other.id);
+			}
+
+
+
+		};
 
 
 #endif /* HT_H_ */

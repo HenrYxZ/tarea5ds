@@ -12,12 +12,17 @@
 #include <string>
 
 
+
 using namespace std;
 
+
 int main() {
+
+
+
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 
-	IICMap<const char*,int>* map = newMapObject<const char*,int>();
+	IICMap<timeStamp,int>* map = newMapObject<timeStamp,int>();
 	/*
 	map->put("hola", "mundo");
 	delete map;
@@ -26,20 +31,32 @@ int main() {
 	*/
 
 
-	map->put("alfa",3);
+	timeStamp st=timeStamp();
+
+	map->put(st,3);
 	//cout << map->find(2);
-	if(map->contains("alfa"))
+	if(map->contains(st))
 	{
 		cout << "Encontro la key" << endl;
-		cout << map->find("alfa") << endl;
+		cout << map->find(st) << endl;
 	}
 	else
 	{
 		cout << "false uno" << endl;
 	}
+	cout << "Remove Key" << endl;
+	map->remove(st);
 
-	map->remove("alfa");
-	cout << map->find("alfa") << endl;
+	if(map->contains(st))
+		{
+			cout << "Encontro la key" << endl;
+			cout << map->find(st) << endl;
+		}
+		else
+		{
+			cout << "NO ENCUENTRA Key" << endl;
+		}
+	//cout << map->find(st) << endl;
 
 
 	/*
@@ -72,3 +89,5 @@ int main() {
 	delete map;
 	return 0;
 }
+
+
